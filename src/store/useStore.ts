@@ -7,13 +7,13 @@ import type ITodo from './types/ITodo';
 
 const useStore = create<ICounter & ITodo>()(
   devtools(
-    persist(
-      (...a) => ({
-        ...createTodoSlice(...a),
-        ...createCounterSlice(...a),
-      }),
-      { name: 't3-store' }
-    )
+    // persist(
+    (...a) => ({
+      ...createTodoSlice(...a),
+      ...createCounterSlice(...a),
+    }),
+    { name: 't3-store' }
+    // )
   )
 );
 

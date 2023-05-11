@@ -27,3 +27,13 @@ model Post {
 
     @@index([authorId])
 }
+
+model Todo {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    description  String @db.VarChar(255)
+    authorId String
+
+    @@index([authorId])
+}

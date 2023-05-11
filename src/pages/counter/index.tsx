@@ -1,17 +1,12 @@
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
+// import { useState } from 'react';
 import useStore from '~/store/useStore';
 
-const Todo: NextPage = () => {
-  const [todo, setTodo] = useState<string>('');
-  const todos = useStore((state) => state.todos);
-  const addTodo = useStore((state) => state.addTodo);
-
-  const add = () => {
-    addTodo(todo);
-  };
+const Counter: NextPage = () => {
+  const counter = useStore((state) => state.counter);
+  const increase = useStore((state) => state.increase);
 
   return (
     <>
@@ -23,19 +18,18 @@ const Todo: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#02326d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Todo PAGE
+            Count: {counter}
           </h1>
 
           <div>
-            <h1>TODO LIST</h1>
-            <input
-              type="text"
-              onChange={(e) => setTodo(e.currentTarget.value)}
-            />
-            <button onClick={add}>add</button>
-            {todos.map((item, index) => (
-              <div key={index}>{item}</div>
-            ))}
+            <button
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+              onClick={() => {
+                increase(1);
+              }}
+            >
+              +
+            </button>
           </div>
           <Link href="/">Home</Link>
         </div>
@@ -44,4 +38,4 @@ const Todo: NextPage = () => {
   );
 };
 
-export default Todo;
+export default Counter;

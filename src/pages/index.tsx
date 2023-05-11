@@ -92,6 +92,13 @@ const Home: NextPage = () => {
             </Link>
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              href="/todo_db"
+            >
+              <h3 className="text-2xl font-bold">Todo-DB →</h3>
+              <div className="text-lg">/todo_db</div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
               href="/counter"
             >
               <h3 className="text-2xl font-bold">Counter →</h3>

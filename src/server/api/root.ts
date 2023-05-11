@@ -1,6 +1,7 @@
 import { createTRPCRouter } from '~/server/api/trpc';
 import { postsRouter } from './routers/posts';
 import { exampleRouter } from '~/server/api/routers/example';
+import { todoRouter } from './routers/todo';
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { exampleRouter } from '~/server/api/routers/example';
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
   posts: postsRouter,
+  todo: todoRouter,
   // users: userRouter,
   // messages: messageRouter,
 });

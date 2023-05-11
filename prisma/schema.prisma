@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
+    // binaryTargets = ["native", "darwin-arm64"] // added for M1 support
+}
+
+datasource db {
+    provider = "postgresql" // "postgresql" | "mysql" | "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Example {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Post {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    content  String @db.VarChar(255)
+    authorId String
+
+    @@index([authorId])
+}

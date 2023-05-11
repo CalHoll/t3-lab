@@ -8,9 +8,9 @@ import { introPrompt } from './constants/constants';
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: 'from tRPC' });
 
-  const userId = 'user123';
-  const introResponse = [];
-  const typeOfWorkIds = [];
+  // const userId = 'user123';
+  // const introResponse = [];
+  // const typeOfWorkIds = [];
 
   const [radioInput, setInput] = useState('');
 
@@ -70,6 +70,8 @@ const Home: NextPage = () => {
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
               href="/about"
+
+              // state={ from: "occupation" }
             >
               <h3 className="text-2xl font-bold">About Page →</h3>
               <div className="text-lg">Routing with static url</div>
@@ -80,6 +82,20 @@ const Home: NextPage = () => {
             >
               <h3 className="text-2xl font-bold">Test Slugs →</h3>
               <div className="text-lg">/other-random-routes</div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              href="/todo"
+            >
+              <h3 className="text-2xl font-bold">Todo →</h3>
+              <div className="text-lg">/todo</div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              href="/counter"
+            >
+              <h3 className="text-2xl font-bold">Counter →</h3>
+              <div className="text-lg">/counter</div>
             </Link>
           </div>
           <p className="text-2xl text-white">

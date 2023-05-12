@@ -1,18 +1,198 @@
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, type ChangeEventHandler } from 'react';
+import { motion } from 'framer-motion';
+
 import { api } from '~/utils/api';
-import { introPrompt } from './constants/constants';
+import useStore from '~/store/useStore';
+
+import {
+  exteriorWorkPrompt,
+  interiorRequiresPlansIds,
+  interiorWorkPrompt,
+  introPrompt,
+  WorkType,
+  interiorRequiresPlansResult,
+  interiorWithoutPlansResult,
+} from './constants/constants';
+
+const getInteriorResult = (workDetailsIds: string[]) => {
+  const requiresPlans = interiorRequiresPlansIds.some((id) =>
+    workDetailsIds.includes(id)
+  );
+
+  const resultMessage = requiresPlans
+    ? interiorRequiresPlansResult
+    : interiorWithoutPlansResult;
+
+  return resultMessage;
+};
+
+const getExteriorResult = (workDetailsIds: string[]) => {
+  // const requiresPlans = interiorRequiresPlansIds.some((id) =>
+  //   workDetailsIds.includes(id)
+  // );
+
+  // const resultMessage = requiresPlans
+  //   ? interiorRequiresPlansResult
+  //   : interiorWithoutPlansResult;
+
+  return `Exterior result message ${workDetailsIds[0] ?? 'no work details'}`;
+};
+
+const ProjectDetailsResult = () => {
+  const workDetailsIds = useStore((state) => state.workDetailsIds);
+  const typeOfWork = useStore((state) => state.typeOfWork);
+  const resultMessage =
+    typeOfWork === WorkType.Interior
+      ? getInteriorResult(workDetailsIds)
+      : getExteriorResult(workDetailsIds);
+
+  return (
+    <div className="flex grow flex-col">
+      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+        {resultMessage}
+      </h1>
+    </div>
+  );
+};
+
+const ProjectDetailsPrompt = () => {
+  const typeOfWork = useStore((state) => state.typeOfWork);
+  const workDetailsIds = useStore((state) => state.workDetailsIds);
+  const addToDetails = useStore((state) => state.addToDetails);
+
+  // TODO: set this state to previous prompt data
+  const propData =
+    typeOfWork === WorkType.Interior ? interiorWorkPrompt : exteriorWorkPrompt;
+
+  return (
+    <div className="flex grow flex-col">
+      <label
+        htmlFor="interior-or-external"
+        className="mb-2 block py-4 text-sm font-medium text-gray-100"
+      >
+        {propData.Question}
+      </label>
+      <fieldset>
+        <legend className="sr-only">Work Type</legend>
+        {propData.Responses.map((response) => (
+          <div
+            className="mb-4 flex items-center"
+            key={'question-option-' + response.id}
+          >
+            <input
+              id={'details-question'}
+              type="checkbox"
+              name="details-question"
+              value={response.id}
+              onChange={(e) => {
+                // TODO: update the store with the response
+                // setInput(e.currentTarget.value);
+                addToDetails(e.currentTarget.value);
+              }}
+              className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:bg-blue-600 dark:focus:ring-blue-600"
+            />
+            <label
+              htmlFor={'question-option-' + response.id}
+              className="ml-2 block text-sm font-medium text-gray-100 dark:text-gray-300"
+            >
+              {response.desc}
+            </label>
+          </div>
+        ))}
+      </fieldset>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {},
+        }}
+      >
+        <button
+          hidden={workDetailsIds.length === 0}
+          onClick={() => {
+            console.log(`workDetailsIds value = `, workDetailsIds);
+          }}
+        >
+          Next
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
+const InteriorOrExternalPrompt = () => {
+  const [radioInput, setInput] = useState('');
+
+  return (
+    <div className="flex grow flex-col">
+      <label
+        htmlFor="interior-or-external"
+        className="mb-2 block py-4 text-sm font-medium text-gray-100"
+      >
+        {introPrompt.Question}
+      </label>
+      <fieldset>
+        <legend className="sr-only">Work Type</legend>
+        {introPrompt.Responses.map((response) => (
+          <div
+            className="mb-4 flex items-center"
+            key={'question-option-' + response.id}
+          >
+            <input
+              id={'intro-question'}
+              type="radio"
+              name="intro-question"
+              value={response.id}
+              onChange={(e) => {
+                setInput(e.currentTarget.value);
+              }}
+              className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:bg-blue-600 dark:focus:ring-blue-600"
+            />
+            <label
+              htmlFor={'question-option-' + response.id}
+              className="ml-2 block text-sm font-medium text-gray-100 dark:text-gray-300"
+            >
+              {response.desc}
+            </label>
+          </div>
+        ))}
+      </fieldset>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {},
+        }}
+      >
+        <button
+          hidden={!radioInput}
+          onClick={() => {
+            console.log(`input value = ${radioInput}`);
+          }}
+        >
+          Next
+        </button>
+      </motion.div>
+    </div>
+  );
+};
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: 'from tRPC' });
+  // const hello = api.example.hello.useQuery({ text: 'from tRPC' });
 
   // const userId = 'user123';
   // const introResponse = [];
   // const typeOfWorkIds = [];
+  // const [radioInput, setInput] = useState('');
 
-  const [radioInput, setInput] = useState('');
+  // useEffect(() => {
+  //   console.log(`input value = ${radioInput}`);
+  // }, [radioInput]);
 
   return (
     <>
@@ -26,45 +206,10 @@ const Home: NextPage = () => {
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Hello <span className="text-[hsl(234,100%,70%)]">World</span>
           </h1>
-
-          <label
-            htmlFor="countries"
-            className="mb-2 block text-sm font-medium text-gray-100"
-          >
-            {introPrompt.Question}
-          </label>
-          <fieldset>
-            <legend className="sr-only">Countries</legend>
-            {introPrompt.Responses.map((question) => (
-              <div
-                className="mb-4 flex items-center"
-                key={'question-option-' + question.id}
-              >
-                <input
-                  id={'intro-question'}
-                  type="radio"
-                  name="intro-question"
-                  value={radioInput}
-                  onChange={(e) => setInput(e.target.value)}
-                  className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:bg-blue-600 dark:focus:ring-blue-600"
-                />
-                <label
-                  htmlFor={'question-option-' + question.id}
-                  className="ml-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  {question.desc}
-                </label>
-              </div>
-            ))}
-          </fieldset>
-
-          <button
-            onClick={() => {
-              console.log(`input value = ${radioInput}`);
-            }}
-          >
-            Submit
-          </button>
+          <InteriorOrExternalPrompt />
+          {/* // TODO: update the store with the response */}
+          {true && <ProjectDetailsPrompt />}
+          {true && <ProjectDetailsResult />}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
             <Link
@@ -105,9 +250,6 @@ const Home: NextPage = () => {
               <div className="text-lg">/counter</div>
             </Link>
           </div>
-          <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : 'Loading tRPC query...'}
-          </p>
         </div>
       </main>
     </>

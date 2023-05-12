@@ -5,7 +5,7 @@ import { useState } from 'react';
 import useStore from '~/store/useStore';
 
 const Todo: NextPage = () => {
-  const [todo, setTodo] = useState<string>('');
+  const [todo, setTodo] = useState('');
   const todos = useStore((state) => state.todos);
   const addTodo = useStore((state) => state.addTodo);
 

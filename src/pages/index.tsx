@@ -9,27 +9,56 @@ import useStore from '~/store/useStore';
 
 import {
   exteriorWorkPrompt,
-  interiorRequiresPlansIds,
   interiorWorkPrompt,
   introPrompt,
-  WorkType,
-  interiorRequiresPlansResult,
-  interiorWithoutPlansResult,
+  // type WorkType,
+  WORK_TYPE,
+  type InteriorRespType,
+  INTERIOR_RESPONSES,
+  type ExteriorRespType,
+  EXTERIOR_RESPONSES,
 } from './constants/constants';
 
 const getInteriorResult = (workDetailsIds: string[]) => {
+  const interiorRequiresPlansIds = [
+    INTERIOR_RESPONSES.NEW_BATHROOM,
+    INTERIOR_RESPONSES.NEW_LAUNDRY,
+  ];
+
   const requiresPlans = interiorRequiresPlansIds.some((id) =>
     workDetailsIds.includes(id)
   );
 
   const resultMessage = requiresPlans
-    ? interiorRequiresPlansResult
-    : interiorWithoutPlansResult;
+    ? 'OTC review process with plans is required.'
+    : 'OTC review process without plans is required.';
 
   return resultMessage;
 };
 
 const getExteriorResult = (workDetailsIds: string[]) => {
+  const inHouseIds = [EXTERIOR_RESPONSES.OTHER_EXTERIOR];
+  const reqPlanIds = [
+    EXTERIOR_RESPONSES.GARAGE_DOOR_REPLACEMENT,
+    EXTERIOR_RESPONSES.DOORS,
+  ];
+  const reqWithoutPlanIds = [EXTERIOR_RESPONSES.REROOF];
+
+  const _workIdsMatch = (idList: string[]) => {
+    return workDetailsIds.some((id) => idList.includes(id));
+  };
+
+  if (_workIdsMatch(inHouseIds)) {
+    return 'In-house review process is required';
+  }
+  if (_workIdsMatch(reqPlanIds)) {
+    return 'OTC review process with plans is required.';
+  }
+  if (_workIdsMatch(reqWithoutPlanIds)) {
+    return 'OTC review process without plans is required.';
+  }
+  return 'no building permit is required.';
+
   // const requiresPlans = interiorRequiresPlansIds.some((id) =>
   //   workDetailsIds.includes(id)
   // );
@@ -42,12 +71,14 @@ const getExteriorResult = (workDetailsIds: string[]) => {
 };
 
 const ProjectDetailsResult = () => {
-  const workDetailsIds = useStore((state) => state.workDetailsIds);
   const typeOfWork = useStore((state) => state.typeOfWork);
+  const internalWorkIds = useStore((state) => state.internalWorkIds);
+  const externalWorkIds = useStore((state) => state.externalWorkIds);
+
   const resultMessage =
-    typeOfWork === WorkType.Interior
-      ? getInteriorResult(workDetailsIds)
-      : getExteriorResult(workDetailsIds);
+    typeOfWork === WORK_TYPE.INTERIOR
+      ? getInteriorResult(internalWorkIds)
+      : getExteriorResult(externalWorkIds);
 
   return (
     <div className="flex grow flex-col">
@@ -60,12 +91,39 @@ const ProjectDetailsResult = () => {
 
 const ProjectDetailsPrompt = () => {
   const typeOfWork = useStore((state) => state.typeOfWork);
-  const workDetailsIds = useStore((state) => state.workDetailsIds);
-  const addToDetails = useStore((state) => state.addToDetails);
+  const internalWorkIds = useStore((state) => state.internalWorkIds);
+  const externalWorkIds = useStore((state) => state.externalWorkIds);
+  const addToInternalIds = useStore((state) => state.addToInternalIds);
+  const removeFromInternalIds = useStore(
+    (state) => state.removeFromInternalIds
+  );
+  const addToExternalIds = useStore((state) => state.addToExternalIds);
+  const removeFromExternal = useStore((state) => state.removeFromExternal);
+
+  const handleCheckboxChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const { value, checked } = e.currentTarget;
+
+    switch (typeOfWork) {
+      case WORK_TYPE.INTERIOR:
+        if (checked) {
+          addToInternalIds(value);
+        } else {
+          removeFromInternalIds(value);
+        }
+        break;
+      case WORK_TYPE.EXTERIOR:
+        if (checked) {
+          addToExternalIds(value);
+        } else {
+          removeFromExternal(value);
+        }
+        break;
+    }
+  };
 
   // TODO: set this state to previous prompt data
   const propData =
-    typeOfWork === WorkType.Interior ? interiorWorkPrompt : exteriorWorkPrompt;
+    typeOfWork === WORK_TYPE.INTERIOR ? interiorWorkPrompt : exteriorWorkPrompt;
 
   return (
     <div className="flex grow flex-col">
@@ -87,11 +145,7 @@ const ProjectDetailsPrompt = () => {
               type="checkbox"
               name="details-question"
               value={response.id}
-              onChange={(e) => {
-                // TODO: update the store with the response
-                // setInput(e.currentTarget.value);
-                addToDetails(e.currentTarget.value);
-              }}
+              onChange={handleCheckboxChange}
               className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:bg-blue-600 dark:focus:ring-blue-600"
             />
             <label
@@ -112,9 +166,10 @@ const ProjectDetailsPrompt = () => {
         }}
       >
         <button
-          hidden={workDetailsIds.length === 0}
+          hidden={internalWorkIds.length + externalWorkIds.length === 0}
           onClick={() => {
-            console.log(`workDetailsIds value = `, workDetailsIds);
+            console.log(`internalWorkIds: `, internalWorkIds);
+            console.log(`externalWorkIds: `, externalWorkIds);
           }}
         >
           Next
@@ -248,6 +303,13 @@ const Home: NextPage = () => {
             >
               <h3 className="text-2xl font-bold">Counter →</h3>
               <div className="text-lg">/counter</div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              href="/permits"
+            >
+              <h3 className="text-2xl font-bold">Permits →</h3>
+              <div className="text-lg">/permits</div>
             </Link>
           </div>
         </div>

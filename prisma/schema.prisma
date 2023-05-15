@@ -37,3 +37,11 @@ model Todo {
 
     @@index([authorId])
 }
+
+model WorkSelection {
+    id        Int      @id @default(autoincrement())
+    userId    String       @db.VarChar(255)
+    workType  String       @db.VarChar(255)
+    interiorWork String[]
+    exteriorWork String[]
+}

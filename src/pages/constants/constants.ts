@@ -79,7 +79,7 @@ export const exteriorWorkPrompt = {
     { id: EXTERIOR_RESPONSES.REROOF, desc: 'Re-roofing' },
     {
       id: EXTERIOR_RESPONSES.SHORT_FENCE,
-      desc: 'Building fences less than 6 feet.',
+      desc: 'Building fences less than 6 feet',
     },
     { id: EXTERIOR_RESPONSES.OTHER_EXTERIOR, desc: 'Other' },
   ],

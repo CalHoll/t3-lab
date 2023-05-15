@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         setResult('OTC review process with plans is required');
       } else if (exteriorWork.includes('Re-roofing')) {
         setResult('OTC review process without plans is required');
-      } else if (exteriorWork.includes('Building fences less than 6 feet.')) {
+      } else if (exteriorWork.includes('Building fences less than 6 feet')) {
         setResult('No building permit is required');
       } else {
         setResult('');

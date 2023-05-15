@@ -1,253 +1,78 @@
 import { type NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
-import { useState, useEffect, type ChangeEventHandler } from 'react';
-import { motion } from 'framer-motion';
-
-import { api } from '~/utils/api';
+import { useState, useEffect } from 'react';
+import {
+  WorkTypeView,
+  InteriorWorkView,
+  ExteriorWorkView,
+} from '~/pages/views';
 import useStore from '~/store/useStore';
 
-import {
-  exteriorWorkPrompt,
-  interiorWorkPrompt,
-  introPrompt,
-  // type WorkType,
-  WORK_TYPE,
-  type InteriorRespType,
-  INTERIOR_RESPONSES,
-  type ExteriorRespType,
-  EXTERIOR_RESPONSES,
-} from './constants/constants';
-
-const getInteriorResult = (workDetailsIds: string[]) => {
-  const interiorRequiresPlansIds = [
-    INTERIOR_RESPONSES.NEW_BATHROOM,
-    INTERIOR_RESPONSES.NEW_LAUNDRY,
-  ];
-
-  const requiresPlans = interiorRequiresPlansIds.some((id) =>
-    workDetailsIds.includes(id)
-  );
-
-  const resultMessage = requiresPlans
-    ? 'OTC review process with plans is required.'
-    : 'OTC review process without plans is required.';
-
-  return resultMessage;
-};
-
-const getExteriorResult = (workDetailsIds: string[]) => {
-  const inHouseIds = [EXTERIOR_RESPONSES.OTHER_EXTERIOR];
-  const reqPlanIds = [
-    EXTERIOR_RESPONSES.GARAGE_DOOR_REPLACEMENT,
-    EXTERIOR_RESPONSES.DOORS,
-  ];
-  const reqWithoutPlanIds = [EXTERIOR_RESPONSES.REROOF];
-
-  const _workIdsMatch = (idList: string[]) => {
-    return workDetailsIds.some((id) => idList.includes(id));
-  };
-
-  if (_workIdsMatch(inHouseIds)) {
-    return 'In-house review process is required';
-  }
-  if (_workIdsMatch(reqPlanIds)) {
-    return 'OTC review process with plans is required.';
-  }
-  if (_workIdsMatch(reqWithoutPlanIds)) {
-    return 'OTC review process without plans is required.';
-  }
-  return 'no building permit is required.';
-
-  // const requiresPlans = interiorRequiresPlansIds.some((id) =>
-  //   workDetailsIds.includes(id)
-  // );
-
-  // const resultMessage = requiresPlans
-  //   ? interiorRequiresPlansResult
-  //   : interiorWithoutPlansResult;
-
-  return `Exterior result message ${workDetailsIds[0] ?? 'no work details'}`;
-};
-
-const ProjectDetailsResult = () => {
-  const typeOfWork = useStore((state) => state.typeOfWork);
-  const internalWorkIds = useStore((state) => state.internalWorkIds);
-  const externalWorkIds = useStore((state) => state.externalWorkIds);
-
-  const resultMessage =
-    typeOfWork === WORK_TYPE.INTERIOR
-      ? getInteriorResult(internalWorkIds)
-      : getExteriorResult(externalWorkIds);
-
-  return (
-    <div className="flex grow flex-col">
-      <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-        {resultMessage}
-      </h1>
-    </div>
-  );
-};
-
-const ProjectDetailsPrompt = () => {
-  const typeOfWork = useStore((state) => state.typeOfWork);
-  const internalWorkIds = useStore((state) => state.internalWorkIds);
-  const externalWorkIds = useStore((state) => state.externalWorkIds);
-  const addToInternalIds = useStore((state) => state.addToInternalIds);
-  const removeFromInternalIds = useStore(
-    (state) => state.removeFromInternalIds
-  );
-  const addToExternalIds = useStore((state) => state.addToExternalIds);
-  const removeFromExternal = useStore((state) => state.removeFromExternal);
-
-  const handleCheckboxChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const { value, checked } = e.currentTarget;
-
-    switch (typeOfWork) {
-      case WORK_TYPE.INTERIOR:
-        if (checked) {
-          addToInternalIds(value);
-        } else {
-          removeFromInternalIds(value);
-        }
-        break;
-      case WORK_TYPE.EXTERIOR:
-        if (checked) {
-          addToExternalIds(value);
-        } else {
-          removeFromExternal(value);
-        }
-        break;
-    }
-  };
-
-  // TODO: set this state to previous prompt data
-  const propData =
-    typeOfWork === WORK_TYPE.INTERIOR ? interiorWorkPrompt : exteriorWorkPrompt;
-
-  return (
-    <div className="flex grow flex-col">
-      <label
-        htmlFor="interior-or-external"
-        className="mb-2 block py-4 text-sm font-medium text-gray-100"
-      >
-        {propData.Question}
-      </label>
-      <fieldset>
-        <legend className="sr-only">Work Type</legend>
-        {propData.Responses.map((response) => (
-          <div
-            className="mb-4 flex items-center"
-            key={'question-option-' + response.id}
-          >
-            <input
-              id={'details-question'}
-              type="checkbox"
-              name="details-question"
-              value={response.id}
-              onChange={handleCheckboxChange}
-              className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:bg-blue-600 dark:focus:ring-blue-600"
-            />
-            <label
-              htmlFor={'question-option-' + response.id}
-              className="ml-2 block text-sm font-medium text-gray-100 dark:text-gray-300"
-            >
-              {response.desc}
-            </label>
-          </div>
-        ))}
-      </fieldset>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {},
-          visible: {},
-        }}
-      >
-        <button
-          hidden={internalWorkIds.length + externalWorkIds.length === 0}
-          onClick={() => {
-            console.log(`internalWorkIds: `, internalWorkIds);
-            console.log(`externalWorkIds: `, externalWorkIds);
-          }}
-        >
-          Next
-        </button>
-      </motion.div>
-    </div>
-  );
-};
-
-const InteriorOrExternalPrompt = () => {
-  const [radioInput, setInput] = useState('');
-
-  return (
-    <div className="flex grow flex-col">
-      <label
-        htmlFor="interior-or-external"
-        className="mb-2 block py-4 text-sm font-medium text-gray-100"
-      >
-        {introPrompt.Question}
-      </label>
-      <fieldset>
-        <legend className="sr-only">Work Type</legend>
-        {introPrompt.Responses.map((response) => (
-          <div
-            className="mb-4 flex items-center"
-            key={'question-option-' + response.id}
-          >
-            <input
-              id={'intro-question'}
-              type="radio"
-              name="intro-question"
-              value={response.id}
-              onChange={(e) => {
-                setInput(e.currentTarget.value);
-              }}
-              className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:focus:bg-blue-600 dark:focus:ring-blue-600"
-            />
-            <label
-              htmlFor={'question-option-' + response.id}
-              className="ml-2 block text-sm font-medium text-gray-100 dark:text-gray-300"
-            >
-              {response.desc}
-            </label>
-          </div>
-        ))}
-      </fieldset>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {},
-          visible: {},
-        }}
-      >
-        <button
-          hidden={!radioInput}
-          onClick={() => {
-            console.log(`input value = ${radioInput}`);
-          }}
-        >
-          Next
-        </button>
-      </motion.div>
-    </div>
-  );
-};
-
 const Home: NextPage = () => {
-  // const hello = api.example.hello.useQuery({ text: 'from tRPC' });
+  const {
+    workType,
+    interiorWork,
+    exteriorWork,
+    result,
+    setWorkType,
+    setInteriorWork,
+    setExteriorWork,
+    setResult,
+  } = useStore((state) => state);
 
-  // const userId = 'user123';
-  // const introResponse = [];
-  // const typeOfWorkIds = [];
-  // const [radioInput, setInput] = useState('');
+  // const [workType, setWorkType] = useState<string>('');
+  // const [interiorWork, setInteriorWork] = useState<string[]>([]);
+  // const [exteriorWork, setExteriorWork] = useState<string[]>([]);
+  // const [result, setResult] = useState<string>('');
 
-  // useEffect(() => {
-  //   console.log(`input value = ${radioInput}`);
-  // }, [radioInput]);
+  useEffect(() => {
+    if (workType === 'Interior') {
+      if (
+        interiorWork.includes('New bathroom') ||
+        interiorWork.includes('New laundry room')
+      ) {
+        setResult('OTC review process with plans is required');
+      } else if (interiorWork.length !== 0) {
+        setResult('An OTC review process without plans is required');
+      } else {
+        setResult('');
+      }
+    } else if (workType === 'Exterior') {
+      if (exteriorWork.includes('Other')) {
+        setResult('An in-house review process is required.');
+      } else if (
+        exteriorWork.includes('Garage door replacement') ||
+        exteriorWork.includes('Work on exterior doors')
+      ) {
+        setResult('OTC review process with plans is required');
+      } else if (exteriorWork.includes('Re-roofing')) {
+        setResult('OTC review process without plans is required');
+      } else if (exteriorWork.includes('Building fences less than 6 feet.')) {
+        setResult('No building permit is required');
+      } else {
+        setResult('');
+      }
+    }
+  }, [workType, interiorWork, exteriorWork]);
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // // this should be replaced with a real user ID
+    // const userId = 'fake-user-id';
+    // const workSelection = {
+    //   userId,
+    //   workType,
+    //   interiorWork,
+    //   exteriorWork,
+    // };
+    // try {
+    //   await client.mutation('createWorkSelection', workSelection);
+    //   setResult('Data submitted successfully');
+    // } catch (error) {
+    //   setResult('Error submitting data');
+    // }
+    return;
+  };
 
   return (
     <>
@@ -258,59 +83,26 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#02326d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Hello <span className="text-[hsl(234,100%,70%)]">World</span>
-          </h1>
-          <InteriorOrExternalPrompt />
-          {/* // TODO: update the store with the response */}
-          {true && <ProjectDetailsPrompt />}
-          {true && <ProjectDetailsResult />}
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="/about"
-
-              // state={ from: "occupation" }
-            >
-              <h3 className="text-2xl font-bold">About Page →</h3>
-              <div className="text-lg">Routing with static url</div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href={'/some-random-route' + `${Date.now()}`}
-            >
-              <h3 className="text-2xl font-bold">Test Slugs →</h3>
-              <div className="text-lg">/other-random-routes</div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="/todo"
-            >
-              <h3 className="text-2xl font-bold">Todo →</h3>
-              <div className="text-lg">/todo</div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="/todo_db"
-            >
-              <h3 className="text-2xl font-bold">Todo-DB →</h3>
-              <div className="text-lg">/todo_db</div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="/counter"
-            >
-              <h3 className="text-2xl font-bold">Counter →</h3>
-              <div className="text-lg">/counter</div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="/permits"
-            >
-              <h3 className="text-2xl font-bold">Permits →</h3>
-              <div className="text-lg">/permits</div>
-            </Link>
+          <div className="w-96 space-y-5 rounded-xl bg-white p-8 shadow-lg">
+            <h1 className="text-center text-2xl font-bold text-blue-700">
+              Permit Finder
+            </h1>
+            <form onSubmit={handleFormSubmit} className="space-y-5">
+              <WorkTypeView onChange={setWorkType} />
+              {workType === 'Interior' && (
+                <InteriorWorkView onChange={setInteriorWork} />
+              )}
+              {workType === 'Exterior' && (
+                <ExteriorWorkView onChange={setExteriorWork} />
+              )}
+              {/* <button
+                type="submit"
+                className="w-full rounded bg-blue-700 px-4 py-2 text-lg text-white hover:bg-blue-800"
+              >
+                Submit
+              </button> */}
+            </form>
+            <p className="text-xl text-blue-700">{result}</p>
           </div>
         </div>
       </main>

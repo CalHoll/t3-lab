@@ -12,36 +12,50 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model State {
+    id              Int            @id @default(autoincrement())
+    name            String
+    municipalities  Municipality[]
 }
 
-model Post {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-
-    content  String @db.VarChar(255)
-    authorId String
-
-    @@index([authorId])
+model Municipality {
+    id      Int    @id @default(autoincrement())
+    name    String
+    stateId Int
+    state   State  @relation(fields: [stateId], references: [id])
+    users   User[]
+    questions Question[]
 }
 
-model Todo {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
+model User {
+    id             Int            @id @default(autoincrement())
+    userId         String
+    municipalityId Int
+    municipality   Municipality   @relation(fields: [municipalityId], references: [id])
+    workSelections WorkSelection[]
+}
 
-    description  String @db.VarChar(255)
-    authorId String
+model Question {
+    id             Int    @id @default(autoincrement())
+    questionText   String
+    options        Option[]
+    municipalityId Int
+    municipality   Municipality @relation(fields: [municipalityId], references: [id])
+}
 
-    @@index([authorId])
+model Option {
+    id         Int      @id @default(autoincrement())
+    optionText String
+    response   String
+    questionId Int
+    question   Question @relation(fields: [questionId], references: [id])
 }
 
 model WorkSelection {
-    id        Int      @id @default(autoincrement())
-    userId    String       @db.VarChar(255)
-    workType  String       @db.VarChar(255)
-    interiorWork String[]
-    exteriorWork String[]
+    id           Int      @id @default(autoincrement())
+    userId       Int
+    workType     String
+    options      String[]
+    user         User     @relation(fields: [userId], references: [id])
 }
+

@@ -1,11 +1,37 @@
-// import type { StateCreator } from 'zustand';
-// import type ITodo from '~/store/types/ITodo';
+import type { StateCreator } from 'zustand';
+import type IWorkPermit from '~/store/types/IWorkPermit';
 
-// const createTodoSlice: StateCreator<ITodo> = (set, get) => ({
-//   todos: ['create', 'next js app', 'using typescript'],
-//   addTodo(todo: string) {
-//     set((state) => ({ todos: [...state.todos, todo] }));
-//   },
-// });
+const createWorkPermitSlice: StateCreator<IWorkPermit> = (set, get) => ({
+  workType: '',
+  interiorWork: [],
+  exteriorWork: [],
+  result: '',
+  setWorkType: (workType) => set({ workType }),
+  setInteriorWork: (interiorWork) => set({ interiorWork }),
+  setExteriorWork: (exteriorWork) => set({ exteriorWork }),
+  setResult: (result) => set({ result }),
 
-// export default createTodoSlice;
+  // ! OLD IMPLEMENTATION
+  //   typeOfWork: '',
+  //   internalWorkIds: [],
+  //   externalWorkIds: [],
+  //   addToInternalIds(workId) {
+  //     set((state) => ({ internalWorkIds: [...state.internalWorkIds, workId] }));
+  //   },
+  //   removeFromInternalIds(workId) {
+  //     set((state) => ({
+  //       internalWorkIds: state.internalWorkIds.filter((el) => el != workId),
+  //     }));
+  //   },
+
+  //   addToExternalIds(workId) {
+  //     set((state) => ({ externalWorkIds: [...state.externalWorkIds, workId] }));
+  //   },
+  //   removeFromExternal(workId) {
+  //     set((state) => ({
+  //       externalWorkIds: state.externalWorkIds.filter((el) => el != workId),
+  //     }));
+  //   },
+});
+
+export default createWorkPermitSlice;

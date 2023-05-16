@@ -1,5 +1,8 @@
-import { type WorkOptionType, type ResultMapType } from '~/pages/index.d';
-import { permitFormConfig } from '../data/data';
+import {
+  type WorkOptionType,
+  type ResultMapType,
+  permitFormConfig,
+} from '~/server/data/data';
 
 export const getWorkTypeData = (workType: string): WorkOptionType => {
   if (!workType) {

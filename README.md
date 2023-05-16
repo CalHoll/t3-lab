@@ -17,6 +17,7 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+- [zustand](https://github.com/pmndrs/zustand)
 
 To learn more about the [T3 Stack](https://create.t3.gg/), check out the following resources:
 
@@ -24,7 +25,23 @@ To learn more about the [T3 Stack](https://create.t3.gg/), check out the followi
 - [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available)
 - [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app)
 
-## How do I test this?
+## Setup and Development
+
+### Local Development
+
+Install dependencies:
+
+```sh
+    npm install
+```
+
+Start server locally:
+
+```sh
+    npm run dev
+```
+
+Open a web browser and navigate to [http://localhost:3000/](http://localhost:3000/).
 
 ## How is this deployed?
 

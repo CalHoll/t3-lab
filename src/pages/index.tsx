@@ -2,9 +2,7 @@ import React from 'react';
 import 'tailwindcss/tailwind.css';
 import { type NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect } from 'react';
 import useStore from '~/store/useStore';
-import { getPermitResult } from '~/server/helpers/helpers';
 import { Checkbox } from '~/components/checkbox';
 import { RadioButton } from '~/components/radio_button';
 import { getWorkTypeData } from '~/server/helpers/helpers';
@@ -48,7 +46,7 @@ export const WorkOptionsView = () => {
       ? workOptions.filter((v) => v !== value)
       : [...workOptions, value];
 
-    setWorkOptions(newSelected);
+    setWorkOptions(workType, newSelected);
   };
 
   return (
@@ -69,34 +67,63 @@ export const WorkOptionsView = () => {
   );
 };
 
+export const InHouseReview = () => (
+  <OptionList
+    title="In-House Review Process"
+    items={[
+      'A building permit is required.',
+      'Include plan sets.',
+      'Submit application for in-house review.',
+    ]}
+  />
+);
+
+interface OtcSubmissionProps {
+  withPlans: boolean;
+}
+
+export const OtcSubmission: React.FC<OtcSubmissionProps> = ({ withPlans }) => {
+  return (
+    <OptionList
+      title="Over-the-Counter Submission Process"
+      items={[
+        'A building permit is required.',
+        ...(withPlans ? ['Include plan sets.'] : []),
+        'Submit application for OTC review.',
+      ]}
+    />
+  );
+};
+
+export const NoPermit = () => (
+  <OptionList
+    title="No Permit"
+    items={['Nothing is required! You’re set to build.']}
+  />
+);
+
+interface ListProps {
+  title: string;
+  items: string[];
+}
+
+const OptionList: React.FC<ListProps> = ({ title, items }) => (
+  <div className="mb-4 rounded bg-white p-4 shadow">
+    <h2 className="mb-2 text-xl font-bold text-gray-800">{title}</h2>
+    <ul className="list-disc pl-5 text-gray-700">
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </ul>
+  </div>
+);
+
 const Home: NextPage = () => {
-  const { workType, workOptions, permitResults, setWorkType, setResult } =
-    useStore((state) => state);
-
-  useEffect(() => {
-    if (!workType) {
-      return;
-    }
-
-    const permitResults = getPermitResult(workType, workOptions);
-    setResult(permitResults);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workType, workOptions]);
+  const { workType, permitResults, setWorkType } = useStore((state) => state);
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // TODO: Connect DB
-    // try {
-    //   await api.permits.create({
-    //     workType,
-    //     workOptions,
-    //     results,
-    //   });
-    //   setResult('Data submitted successfully');
-    // } catch (error) {
-    //   setResult('Error submitting data');
-    // }
     return;
   };
 
@@ -109,22 +136,27 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#02326d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="w-96 space-y-5 rounded-xl bg-white p-8 shadow-lg">
+          <div className="min-w-[50%] space-y-5 rounded-xl bg-white p-8 shadow-lg">
             <h1 className="text-center text-2xl font-bold text-blue-700">
               Permit Finder
             </h1>
             <form onSubmit={handleFormSubmit} className="space-y-5">
               <WorkTypeView onChange={setWorkType} />
               {workType.length > 0 && <WorkOptionsView />}
-
-              {/* <button
-                type="submit"
-                className="w-full rounded bg-blue-700 px-4 py-2 text-lg text-white hover:bg-blue-800"
-              >
-                Submit
-              </button> */}
             </form>
-            <p className="text-xl text-blue-700">{permitResults}</p>
+            {permitResults === 'IN_HOUSE_REVIEW' && <InHouseReview />}
+            {(permitResults === 'OTC_WITH_PLANS' ||
+              permitResults === 'OTC_NO_PLANS') && (
+              <OtcSubmission withPlans={permitResults === 'OTC_WITH_PLANS'} />
+            )}
+            {permitResults === 'NO_PERMIT_REQUIRED' && <NoPermit />}
+
+            {/* <button
+                  type="submit"
+                  className="w-full rounded bg-blue-700 px-4 py-2 text-lg text-white hover:bg-blue-800"
+                >
+                  Submit
+                </button> */}
           </div>
         </div>
       </main>

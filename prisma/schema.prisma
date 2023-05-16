@@ -33,6 +33,7 @@ model User {
     municipalityId Int
     municipality   Municipality   @relation(fields: [municipalityId], references: [id])
     workSelections WorkSelection[]
+    permitResults  PermitResult[]
 }
 
 model Question {
@@ -60,10 +61,14 @@ model WorkSelection {
 }
 
 // TODO: Finish DB models and add results table
-// Example User Result Data:
-// userResult = {
-//   workType: 'Interior',
-//   options: ['New bathroom'],
-//   createdAt: '2021-10-10T00:00:00.000Z',
-//   result: 'OTC review process with plans is required',
-// }
+model PermitResult {
+    id             Int          @id @default(autoincrement())
+    user           User         @relation(fields: [userId], references: [id])
+    userId         Int
+    municipalityId Int
+    createdAt      DateTime     @default(now())
+    version        String       // consider using a DateTime or Int for versioning
+    answers        Json         // stores key-value pairs of questions and answers
+    result         String       // the result text
+}
+

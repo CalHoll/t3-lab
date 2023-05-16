@@ -60,12 +60,12 @@ export const permitFormConfig: PermitFormType = {
         {
           criteriaType: 'ANY', // criteriaType can be ALL, ANY, or NONE
           criteria: ['NEW_BATHROOM', 'NEW_LAUNDRY'],
-          result: 'OTC review process with plans is required',
+          result: 'OTC_WITH_PLANS',
         },
         {
           criteriaType: 'NOT_EMPTY', // criteriaType can be ALL, ANY, NONE, NOT_EMPTY
           criteria: [],
-          result: 'An OTC review process without plans is required',
+          result: 'OTC_NO_PLANS',
         },
       ],
     },
@@ -98,26 +98,26 @@ export const permitFormConfig: PermitFormType = {
         ],
       },
       resultsMap: [
-        // resultsMap is checked in order, put highest priority results first
+        // resultsMap is checked in order, highest priority first
         {
-          criteriaType: 'ANY', // criteriaType can be ALL, ANY, NONE, NOT_EMPTY
+          criteriaType: 'ANY', // ALL, ANY, NONE, NOT_EMPTY
           criteria: ['OTHER_EXTERIOR'],
-          result: 'An in-house review process is required.',
+          result: 'IN_HOUSE_REVIEW',
         },
         {
-          criteriaType: 'ANY', // criteriaType can be ALL, ANY, or NONE
+          criteriaType: 'ANY',
           criteria: ['GARAGE_DOOR_REPLACEMENT', 'DOORS'],
-          result: 'OTC review process with plans is required',
+          result: 'OTC_WITH_PLANS',
         },
         {
-          criteriaType: 'ANY', // criteriaType can be ALL, ANY, or NONE
+          criteriaType: 'ANY',
           criteria: ['REROOF'],
-          result: 'OTC review process without plans is required',
+          result: 'OTC_NO_PLANS',
         },
         {
-          criteriaType: 'ANY', // criteriaType can be ALL, ANY, NONE, NOT_EMPTY
+          criteriaType: 'ANY',
           criteria: ['SHORT_FENCE'],
-          result: 'No building permit is required',
+          result: 'NO_PERMIT_REQUIRED',
         },
       ],
     },

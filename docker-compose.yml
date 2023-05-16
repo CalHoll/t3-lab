@@ -2,9 +2,6 @@ version: '3.9'
 services:
   pg-db:
     container_name: pg-db
-    # NOTE: using the following image for performance on Mac with m1/m2 chip
-    # image: 'arm64v8/postgres'
-    # NOTE: if not on an m1/m2 chip use the following image instead
     image: postgres:15.3
     restart: always
     env_file: ./.env
@@ -20,10 +17,7 @@ services:
       - default
 
   t3-app:
-    # NOTE: Uncomment the line below if you are using Mac with m1/m2 chip
-    platform: linux/x86_64
-    # NOTE: If you are NOT using a mac with an m1/m2 chip uncomment this line instead
-    # platform: 'linux/amd64'
+    platform: 'linux/amd64'
     build:
       context: .
       dockerfile: Dockerfile
@@ -49,5 +43,3 @@ services:
 
 volumes:
   postgres_data:
-# volumes:
-#   mysql-volume:

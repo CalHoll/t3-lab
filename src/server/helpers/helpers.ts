@@ -53,10 +53,6 @@ export const getPermitResult = (
 ): string => {
   const resultsMap = getResultMapForWorkType(workType);
 
-  console.log('state updated workType = ', workType);
-  console.log('state updated workOptions = ', workOptions);
-  console.log('state updated resultsMap = ', resultsMap);
-
   for (const resultOption of resultsMap) {
     const criteriaType = resultOption.criteriaType;
     const criteria = resultOption.criteria;

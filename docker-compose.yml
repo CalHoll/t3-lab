@@ -1,8 +1,6 @@
 version: '3.9'
 services:
   pg-db:
-    # NOTE: Uncomment the line below if you are using Mac with m1/m2 chip
-    platform: linux/x86_64
     container_name: pg-db
     image: postgres:13
     restart: always

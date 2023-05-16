@@ -102,12 +102,12 @@ export const NoPermit = () => (
   />
 );
 
-interface ListProps {
+interface OptionListProps {
   title: string;
   items: string[];
 }
 
-const OptionList: React.FC<ListProps> = ({ title, items }) => (
+const OptionList: React.FC<OptionListProps> = ({ title, items }) => (
   <div className="mb-4 rounded bg-white p-4 shadow">
     <h2 className="mb-2 text-xl font-bold text-gray-800">{title}</h2>
     <ul className="list-disc pl-5 text-gray-700">

@@ -2,7 +2,10 @@ version: '3.9'
 services:
   pg-db:
     container_name: pg-db
-    image: postgres:13
+    # NOTE: using the following image for performance on Mac with m1/m2 chip
+    # image: 'arm64v8/postgres'
+    # NOTE: if not on an m1/m2 chip use the following image instead
+    image: postgres:15.3
     restart: always
     env_file: ./.env
     environment:

@@ -22,11 +22,6 @@ RUN \
 ##### BUILDER
 
 FROM --platform=linux/amd64 node:16-alpine3.16 AS builder
-### Workaround for https://github.com/prisma/prisma/issues/16901
-# RUN apk add --no-cache libc6-compat
-# RUN apk add --update --no-cache openssl1.1-compat
-# RUN apk update
-
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app

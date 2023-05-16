@@ -1,12 +1,16 @@
-# Create T3 App
+# T3 Sample
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a sample project using the T3 stack (details below). This project was made as simple as possible while still showing an approach that scales.
 
-## What's next? How do I make an app with this?
+Essentially, this project is a dynamic form creator. Currently it expects only two questions to be presented, the first being a radio button, and the second being a multi-select checkbox.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+The second question is dynamic based on the first, and the result is dynamic based on customizable logic that is included in the JSON data.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+It was designed this way to make it easy for other forms and data to be added in the future.
+
+### Bootstrapped with Create-T3-App
+
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`. Some of the technologies used include:
 
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
@@ -14,22 +18,35 @@ If you are not familiar with the different technologies used in this project, pl
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
-## Learn More
+To learn more about the [T3 Stack](https://create.t3.gg/), check out the following resources:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- [T3 Documentation](https://create.t3.gg/)
+- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available)
+- [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## How do I test this?
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## How is this deployed?
 
-## How do I deploy this?
+The app is deployed via Vercel, you can find the current version at [https://t3-pdky091qg-calholl.vercel.app](https://t3-pdky091qg-calholl.vercel.app/)
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+For info on how deployment works, find the [Vercel guide here.](https://create.t3.gg/en/deployment/vercel)
 
-## Setting up the DB
+#### WIP - Running In Docker
 
-### For pg locally running in docker
+Currently the app can also run in Docker, though the DB is included in the compose file and is currently a WIP.
+
+For more info about the app working with docker see the [T3 Docker guide here.](https://create.t3.gg/en/deployment/docker)
+
+## WIP - Setting up the DB
+
+The next step for this project is to connect it to a postgres database. Currently postgres can be spun up using docker, either as a standalone image or networked to a production app version with:
+
+```
+    docker compose up
+```
+
+For development and testing with a database locally, some useful commands follow:
 
 ```sh
     # get image

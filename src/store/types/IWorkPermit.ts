@@ -1,11 +1,9 @@
 interface IWorkPermit {
   workType: string;
-  interiorWork: Array<string>;
-  exteriorWork: Array<string>;
-  result: string;
+  workOptions: Array<string>;
+  permitResults: string;
   setWorkType: (workType: string) => void;
-  setInteriorWork: (interiorWork: Array<string>) => void;
-  setExteriorWork: (exteriorWork: Array<string>) => void;
+  setWorkOptions: (workOptions: Array<string>) => void;
   setResult: (result: string) => void;
 }
 

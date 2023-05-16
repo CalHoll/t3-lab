@@ -10,7 +10,7 @@
     "start": "next start",
     "build:back": "docker-compose build nestjs-app",
     "build:front": "docker-compose build nextjs-app",
-    "start:db": "docker-compose up mysql-db",
+    "start:db": "docker-compose up pg-db",
     "start:back": "docker-compose up nestjs-app --renew-anon-volumes",
     "start:front": "docker-compose up nextjs-app --renew-anon-volumes",
     "clean": "docker-compose down -v"
@@ -23,7 +23,6 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
-    "framer-motion": "^10.12.10",
     "next": "^13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

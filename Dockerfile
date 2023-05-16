@@ -3,7 +3,7 @@
 ##### DEPENDENCIES
 
 FROM --platform=linux/amd64 node:16-alpine3.16 AS deps
-RUN apk add --no-cache libc6-compat openssl1.1-compat
+# RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
 # Install Prisma Client - remove if not using Prisma
@@ -23,9 +23,9 @@ RUN \
 
 FROM --platform=linux/amd64 node:16-alpine3.16 AS builder
 ### Workaround for https://github.com/prisma/prisma/issues/16901
-RUN apk add --no-cache libc6-compat
-RUN apk add --update --no-cache openssl1.1-compat
-RUN apk update
+# RUN apk add --no-cache libc6-compat
+# RUN apk add --update --no-cache openssl1.1-compat
+# RUN apk update
 
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_CLIENTVAR
@@ -33,7 +33,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN \
  if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
@@ -47,7 +47,7 @@ FROM --platform=linux/amd64 node:16-alpine3.16 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

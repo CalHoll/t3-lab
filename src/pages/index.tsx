@@ -1,72 +1,34 @@
 import { type NextPage } from 'next';
 import Head from 'next/head';
-import { useState, useEffect } from 'react';
-import {
-  WorkTypeView,
-  InteriorWorkView,
-  ExteriorWorkView,
-} from '~/pages/views';
+import { useEffect } from 'react';
+import { WorkTypeView, WorkOptionsView } from '~/pages/views';
 import useStore from '~/store/useStore';
+import { getPermitResult } from '~/server/helpers/helpers';
 
 const Home: NextPage = () => {
-  const {
-    workType,
-    interiorWork,
-    exteriorWork,
-    result,
-    setWorkType,
-    setInteriorWork,
-    setExteriorWork,
-    setResult,
-  } = useStore((state) => state);
-
-  // const [workType, setWorkType] = useState<string>('');
-  // const [interiorWork, setInteriorWork] = useState<string[]>([]);
-  // const [exteriorWork, setExteriorWork] = useState<string[]>([]);
-  // const [result, setResult] = useState<string>('');
+  const { workType, workOptions, permitResults, setWorkType, setResult } =
+    useStore((state) => state);
 
   useEffect(() => {
-    if (workType === 'Interior') {
-      if (
-        interiorWork.includes('New bathroom') ||
-        interiorWork.includes('New laundry room')
-      ) {
-        setResult('OTC review process with plans is required');
-      } else if (interiorWork.length !== 0) {
-        setResult('An OTC review process without plans is required');
-      } else {
-        setResult('');
-      }
-    } else if (workType === 'Exterior') {
-      if (exteriorWork.includes('Other')) {
-        setResult('An in-house review process is required.');
-      } else if (
-        exteriorWork.includes('Garage door replacement') ||
-        exteriorWork.includes('Work on exterior doors')
-      ) {
-        setResult('OTC review process with plans is required');
-      } else if (exteriorWork.includes('Re-roofing')) {
-        setResult('OTC review process without plans is required');
-      } else if (exteriorWork.includes('Building fences less than 6 feet')) {
-        setResult('No building permit is required');
-      } else {
-        setResult('');
-      }
+    if (!workType) {
+      return;
     }
-  }, [workType, interiorWork, exteriorWork]);
+
+    const permitResults = getPermitResult(workType, workOptions);
+    setResult(permitResults);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workType, workOptions]);
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // // this should be replaced with a real user ID
-    // const userId = 'fake-user-id';
-    // const workSelection = {
-    //   userId,
-    //   workType,
-    //   interiorWork,
-    //   exteriorWork,
-    // };
+    // TODO: Connect DB
     // try {
-    //   await client.mutation('createWorkSelection', workSelection);
+    //   await api.permits.create({
+    //     workType,
+    //     workOptions,
+    //     results,
+    //   });
     //   setResult('Data submitted successfully');
     // } catch (error) {
     //   setResult('Error submitting data');
@@ -89,12 +51,8 @@ const Home: NextPage = () => {
             </h1>
             <form onSubmit={handleFormSubmit} className="space-y-5">
               <WorkTypeView onChange={setWorkType} />
-              {workType === 'Interior' && (
-                <InteriorWorkView onChange={setInteriorWork} />
-              )}
-              {workType === 'Exterior' && (
-                <ExteriorWorkView onChange={setExteriorWork} />
-              )}
+              {workType.length > 0 && <WorkOptionsView />}
+
               {/* <button
                 type="submit"
                 className="w-full rounded bg-blue-700 px-4 py-2 text-lg text-white hover:bg-blue-800"
@@ -102,7 +60,7 @@ const Home: NextPage = () => {
                 Submit
               </button> */}
             </form>
-            <p className="text-xl text-blue-700">{result}</p>
+            <p className="text-xl text-blue-700">{permitResults}</p>
           </div>
         </div>
       </main>

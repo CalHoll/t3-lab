@@ -1,11 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-
-import {
-  createTRPCRouter,
-  // privateProcedure,
-  publicProcedure,
-} from '~/server/api/trpc';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const permitsRouter = createTRPCRouter({
   getWorkSelection: publicProcedure
@@ -36,7 +31,7 @@ export const permitsRouter = createTRPCRouter({
   getWorkSelectionByUserId: publicProcedure
     .input(
       z.object({
-        userId: z.string(),
+        userId: z.number(),
       })
     )
     .query(({ ctx, input }) => {
@@ -50,28 +45,24 @@ export const permitsRouter = createTRPCRouter({
       return workSelections;
     }),
 
-  create: publicProcedure // privateProcedure
+  create: publicProcedure // privateProcedure // TODO: set up as privateProcedure with user auth
     .input(
       z.object({
         workType: z.string().min(1).max(255),
-        interiorWork: z.array(z.string().min(1).max(255)),
-        exteriorWork: z.array(z.string().min(1).max(255)),
+        workOptions: z.array(z.string().min(1).max(255)),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // This is currently mocked, but could be a private procedure where userId is added in the middleware.
-      const userId = 'Fakey_McFakeson'; // ctx.userId;
+      const userId = 12345; // ctx.userId; // TODO: remove mock userId
 
-      // TODO: Possible improvement - rate limit requests
-
-      // TODO: one gotcha would be ensuring that if worktype is interior exterior work is an empty string and vice-versa
+      // TODO: Possible improvement - rate limit requests from the same user.
 
       const workSelections = await ctx.prisma.workSelection.create({
         data: {
           userId,
           workType: input.workType,
-          interiorWork: input.interiorWork,
-          exteriorWork: input.exteriorWork,
+          options: input.workOptions,
+          // results, etc...
         },
       });
 

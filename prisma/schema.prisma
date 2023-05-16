@@ -59,3 +59,11 @@ model WorkSelection {
     user         User     @relation(fields: [userId], references: [id])
 }
 
+// TODO: Finish DB models and add results table
+// Example User Result Data:
+// userResult = {
+//   workType: 'Interior',
+//   options: ['New bathroom'],
+//   createdAt: '2021-10-10T00:00:00.000Z',
+//   result: 'OTC review process with plans is required',
+// }

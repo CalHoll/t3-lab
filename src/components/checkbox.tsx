@@ -1,6 +1,7 @@
 type CheckboxProps = {
   name: string;
   value: string;
+  label: string;
   checked: boolean;
   onChange: (value: string) => void;
 };
@@ -8,6 +9,7 @@ type CheckboxProps = {
 export const Checkbox: React.FC<CheckboxProps> = ({
   name,
   value,
+  label,
   checked,
   onChange,
 }) => {
@@ -21,7 +23,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         className="form-checkbox h-5 w-5 text-blue-600"
         onChange={() => onChange(value)}
       />
-      <span className="font-medium text-gray-900">{value}</span>
+      <span className="font-medium text-gray-900">{label}</span>
     </label>
   );
 };

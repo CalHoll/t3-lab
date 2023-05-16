@@ -1,12 +1,14 @@
 type RadioButtonProps = {
   name: string;
   value: string;
+  label: string;
   onChange: (value: string) => void;
 };
 
 export const RadioButton: React.FC<RadioButtonProps> = ({
   name,
   value,
+  label,
   onChange,
 }) => {
   return (
@@ -18,7 +20,7 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
         className="form-radio h-5 w-5 text-blue-600"
         onChange={(e) => onChange(e.target.value)}
       />
-      <span className="font-medium text-gray-900">{value}</span>
+      <span className="font-medium text-gray-900">{label}</span>
     </label>
   );
 };
